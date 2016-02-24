@@ -19,7 +19,13 @@ extern const char* g_page_end;
 static char* ok_response_1 =
   "HTTP/1.0 200 OK\n"
   "Content-type: text/html\n"
-  "\n";
+  "\n" 
+  "<html><head><title>OpenHPC in China</title></head>\n"
+  "<body style=\"background:aqua; text-align:center; \"><h1>OpenHPC in China</h1><h3>Under Development </h3>\n"
+  "<h4>Contact Information: </h4>"
+  "<p>E-mail:<a href=\"mailto:lingweicai\@sohu.com\" > lingweicai\@sohu.com</a></p>"
+  "<p>Tel: 18600622522 </p>"
+  "</body></html>";
 
 
 /* HTTP response, header, and body indicating that the we didn't
@@ -89,11 +95,15 @@ void my_handle_connection (int connection_fd)
       /* This server only implements the GET method.  The client
 	 specified some other method, so report the failure.  */
 
+      char* web_temp = 
+      "<h3>The Website is under development. </h3>"
+      "<p>You can contact lingweicai@sohu.com for more information</p>";
+
       snprintf (response, sizeof (response), "%s", ok_response_1);
-      strncat (response, g_page_start, strlen(g_page_start));
+      // strncat (response, g_page_start, strlen(g_page_start));
  
-      strncat (response, g_page_menu_pub, strlen(g_page_menu_pub));
-      strncat (response, g_page_end, strlen(g_page_end));
+      //strncat (response, web_temp, strlen(web_temp));
+      //strncat (response, g_page_end, strlen(g_page_end));
 
       write (connection_fd, response, strlen (response));
       

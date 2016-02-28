@@ -72,5 +72,7 @@ extern const char* g_page_start;
 extern const char* g_page_menu_admin;
 extern const char* g_page_menu_pub;
 extern const char* g_page_end;
+/* handle_adimin.c */
+extern void handle_admin (int fd);
 
 #endif  /* SERVER_H */

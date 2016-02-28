@@ -27,6 +27,14 @@ static char* ok_response_1 =
   "<p>Tel: 18600622522 </p>"
   "</body></html>";
 
+static char* ok_response_0 =
+  "HTTP/1.0 200 OK\n"
+  "Content-type: text/html\n"
+  "\n" 
+  "<html><head><title>OpenHPC in China</title></head>\n"
+  "<body style=\"background:aqua; text-align:center; \"><h1>OpenHPC in China</h1><h3>Under Development  response 0 </h3>\n"
+  "</body></html>";
+
 
 /* HTTP response, header, and body indicating that the we didn't
    understand the request.  */
@@ -42,44 +50,16 @@ void my_handle_connection (int connection_fd)
 
   /* Read some data from the client.  */
   bytes_read = read (connection_fd, buffer, sizeof (buffer) - 1);
-  /*
-  len = sizeof (buffer) -1;
-  while (len !=0 && (bytes_read = read(connection_fd, buffer, len )) !=0 ) {
-    if (bytes_read == -1) { 
-      if (errno == EINTR) 
-        continue;
-      perror ("read");
-      break;  
-    }
-    len -= bytes_read;
-    buffer += bytes_read;
-  }   
-  */
 
   if (bytes_read > 0) {
     char method[sizeof (buffer)];
     char url[sizeof (buffer)];
     char protocol[sizeof (buffer)];
 
-    /* Some data was read successfully.  NUL-terminate the buffer so
-       we can use string operations on it.  */
     buffer[bytes_read] = '\0';
-    /* The first line the client sends is the HTTP request, which is
-       composed of a method, the requested page, and the protocol
-       version.  */
+
     sscanf (buffer, "%s %s %s", method, url, protocol);
-    /* The client may send various header information following the
-       request.  For this HTTP implementation, we don't care about it.
-       However, we need to read any data the client tries to send.  Keep
-       on reading data until we get to the end of the header, which is
-       delimited by a blank line.  HTTP specifies CR/LF as the line
-       delimiter.  */
-    /*
-    while (strstr (buffer, "\r\n\r\n") == NULL)
-      bytes_read = read (connection_fd, buffer, sizeof (buffer));
-    */
-    /* Make sure the last read didn't fail.  If it did, there's a
-       problem with the connection, so give up.  */
+
     if (bytes_read == -1) {
       close (connection_fd);
       return;
@@ -94,22 +74,13 @@ void my_handle_connection (int connection_fd)
     else {
       /* This server only implements the GET method.  The client
 	 specified some other method, so report the failure.  */
-
-      char* web_temp = 
-      "<h3>The Website is under development. </h3>"
-      "<p>You can contact lingweicai@sohu.com for more information</p>";
-
+      if (strstr(url+1,"admin") == NULL) {
       snprintf (response, sizeof (response), "%s", ok_response_1);
-      // strncat (response, g_page_start, strlen(g_page_start));
- 
-      //strncat (response, web_temp, strlen(web_temp));
-      //strncat (response, g_page_end, strlen(g_page_end));
-
       write (connection_fd, response, strlen (response));
+      } else {
+         handle_admin ( connection_fd );     
+      } 
       
-      /* A valid request.  Process it.  */
-      //handle_get (connection_fd, url);
-      //
     }
   }
   else if (bytes_read == 0)

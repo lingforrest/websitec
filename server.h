@@ -73,6 +73,7 @@ extern const char* g_page_menu_admin;
 extern const char* g_page_menu_pub;
 extern const char* g_page_end;
 /* handle_adimin.c */
-extern void handle_admin (int fd);
+extern void admin_add_user (int fd, char* buffer);
+extern void urldecode2(char *dst, const char *src);
 
 #endif  /* SERVER_H */

@@ -78,7 +78,7 @@ void my_handle_connection (int connection_fd)
       snprintf (response, sizeof (response), "%s", ok_response_1);
       write (connection_fd, response, strlen (response));
       } else {
-         handle_admin ( connection_fd );     
+         handle_admin ( connection_fd,buffer );     
       } 
       
     }

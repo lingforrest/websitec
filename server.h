@@ -75,5 +75,8 @@ extern const char* g_page_end;
 /* handle_adimin.c */
 extern void admin_add_user (int fd, char* buffer);
 extern void urldecode2(char *dst, const char *src);
+/* print_file.c*/
+extern void print_image_file (int fd, char* url_file);
+
 
 #endif  /* SERVER_H */

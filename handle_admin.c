@@ -144,6 +144,7 @@ void admin_add_user (int fd, char* buffer)
 "<label for=\"email\" class=\"label\">邮箱地址:</label><input type=\"text\" name=\"user_email\" value=\"\" maxlength=\"32\" size=\"32\" /><br />\n"
 "<input type=\"submit\" name=\"submit\" id=\"submit\" value=\"添加\" /><br />\n"
 "</form>\n"
+"<p><img src=\"img/fengjing.jpg\" />images</p>\n"
 "\n";
 
   size_t page_size;
@@ -165,8 +166,7 @@ void admin_create_file (int fd, char* buffer)
 "<form id=\"reg\" action=\"admin_create_file\" method=\"POST\" accept-charset=\"UTF-8\">\n"
 "<label for=\"name\" class=\"label\"> File Name:</label><input type=\"text\" name=\"user_name\" value=\"\" maxlength=\"16\" size=\"16\" /> <br />\n"
 "<input type=\"submit\" name=\"submit\" id=\"submit\" value=\"Create File\" /><br />\n"
-"</form>\n"
-"\n";
+"</form>\n";
 
   int create_file_fd;
   char file_result[48];

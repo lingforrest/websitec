@@ -23,7 +23,7 @@ static char* ok_response_1 =
   "<html><head><title>OpenHPC in China</title></head>\n"
   "<body style=\"background:aqua; text-align:center; \"><h1>OpenHPC in China</h1><h3>Under Development </h3>\n"
   "<h4>Contact Information: </h4>"
-  "<p>E-mail:<a href=\"mailto:lingweicai\@sohu.com\" > lingweicai\@sohu.com</a></p>"
+  "<p>E-mail:<a href=\"mailto:lingweicai@sohu.com\" > lingweicai@sohu.com</a></p>"
   "<p>Tel: 18600622522 </p>"
   "</body></html>";
 
@@ -74,13 +74,17 @@ void my_handle_connection (int connection_fd)
     else {
       /* This server only implements the GET method.  The client
 	 specified some other method, so report the failure.  */
-      if (strstr(url+1,"admin") == NULL) {
+      if (strcmp(url+1,"admin_add_user")==0) admin_add_user (connection_fd, buffer );
+        
+      if (strcmp(url+1,"admin_create_file")==0) admin_create_file (connection_fd, buffer );
+      
+      if (strcmp(url+1,"img/fengjing.jpg")==0) print_img_file (connection_fd, url );
+ 
+      if (strcmp(url,"/") == 0 ) {
       snprintf (response, sizeof (response), "%s", ok_response_1);
       write (connection_fd, response, strlen (response));
-      } else {
-         handle_admin ( connection_fd,buffer );     
       } 
-      
+     
     }
   }
   else if (bytes_read == 0)

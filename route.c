@@ -6,8 +6,33 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
+#include <stdlib.h>
 
 #include "server.h"
+
+/* route variables */
+extern void admin_add_user (int fd, char* buffer);
+extern void admin_create_file (int fd, char* url_file);
+extern void print_img_file (int fd, char* url_file);
+
+struct route {
+        char *url;
+        void (*fpath)(int, char*);
+};
+static struct route routes[] = {
+        { "/css/", print_img_file },
+        { "/script/", print_img_file },
+        { "/docs/", print_img_file },
+        { "/admin_add_user/", admin_add_user },
+        { "/admin_create_file/", admin_create_file },
+        { "/img/fengjing.jpg/", print_img_file },
+};
+static int route_compare(const void *l, const void *r)
+{
+        return strcmp(((struct route *) l)->url,
+                        ((struct route *) r)->url);
+}
+
 
 /* HTTP response and header for a successful request.  */
 
@@ -25,14 +50,6 @@ static char* ok_response_1 =
   "<h4>Contact Information: </h4>"
   "<p>E-mail:<a href=\"mailto:lingweicai@sohu.com\" > lingweicai@sohu.com</a></p>"
   "<p>Tel: 18600622522 </p>"
-  "</body></html>";
-
-static char* ok_response_0 =
-  "HTTP/1.0 200 OK\n"
-  "Content-type: text/html\n"
-  "\n" 
-  "<html><head><title>OpenHPC in China</title></head>\n"
-  "<body style=\"background:aqua; text-align:center; \"><h1>OpenHPC in China</h1><h3>Under Development  response 0 </h3>\n"
   "</body></html>";
 
 
@@ -60,31 +77,31 @@ void my_handle_connection (int connection_fd)
 
     sscanf (buffer, "%s %s %s", method, url, protocol);
 
-    if (bytes_read == -1) {
-      close (connection_fd);
-      return;
-    }
-    /* Check the protocol field.  We understand HTTP versions 1.0 and
+   /* Check the protocol field.  We understand HTTP versions 1.0 and
        1.1.  */
     if (strcmp (protocol, "HTTP/1.0") && strcmp (protocol, "HTTP/1.1")) {
       /* We don't understand this protocol.  Report a bad response.  */
       snprintf (response, sizeof (response),"%s", ok_response_1 );
       write (connection_fd, response, strlen (response));
-    }
-    else {
-      /* This server only implements the GET method.  The client
-	 specified some other method, so report the failure.  */
-      if (strcmp(url+1,"admin_add_user")==0) admin_add_user (connection_fd, buffer );
-        
-      if (strcmp(url+1,"admin_create_file")==0) admin_create_file (connection_fd, buffer );
-      
-      if (strcmp(url+1,"img/fengjing.jpg")==0) print_img_file (connection_fd, url );
- 
-      if (strcmp(url,"/") == 0 ) {
-      snprintf (response, sizeof (response), "%s", ok_response_1);
-      write (connection_fd, response, strlen (response));
-      } 
-     
+    } else {
+      /* Start route  */
+
+        ssize_t count;
+        struct route needle, *route;
+        char *path, *end;
+//        static char buf[4096];
+
+//        path = url;
+        needle.url = url;
+        route = bsearch(&needle, routes, sizeof(routes) / sizeof(struct route),
+                        sizeof(struct route), route_compare);
+        if (route) {
+           route->fpath( connection_fd, url );
+       } else {
+           snprintf (response, sizeof (response), "%s", ok_response_1);
+           write (connection_fd, response, strlen (response));
+        } 
+      /* end of route */
     }
   }
   else if (bytes_read == 0)
@@ -95,3 +112,4 @@ void my_handle_connection (int connection_fd)
     /* The call to read failed.  */
     system_error ("read");
 }
+

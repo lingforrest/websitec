@@ -77,13 +77,17 @@ void my_handle_connection (int connection_fd)
 
     sscanf (buffer, "%s %s %s", method, url, protocol);
 
+    if ( strstr(url,"/img/" ) || strstr(url,"/css/" ) || strstr(url,"/js/" )
+            || strstr(url,"/docs/" )  ) { print_img_file ( connection_fd, url); return;} 
+
    /* Check the protocol field.  We understand HTTP versions 1.0 and
        1.1.  */
     if (strcmp (protocol, "HTTP/1.0") && strcmp (protocol, "HTTP/1.1")) {
       /* We don't understand this protocol.  Report a bad response.  */
       snprintf (response, sizeof (response),"%s", ok_response_1 );
       write (connection_fd, response, strlen (response));
-    } else {
+    } else
+       {
       /* Start route  */
 
         ssize_t count;
@@ -97,7 +101,7 @@ void my_handle_connection (int connection_fd)
                         sizeof(struct route), route_compare);
         if (route) {
            route->fpath( connection_fd, url );
-       } else {
+        } else {
            snprintf (response, sizeof (response), "%s", ok_response_1);
            write (connection_fd, response, strlen (response));
         } 

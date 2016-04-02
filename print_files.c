@@ -13,9 +13,9 @@ void print_img_file (int fd, char* url_file )
 
 /* HTML source for the start of the page we generate.  */
 
-static char* http_start =
+static char* http_start_mine_template =  
   "HTTP/1.0 200 OK\n"
-  "Content-type: image/jpeg \n"
+  "Content-type: %s\n"
   "\n"; 
 
 /* HTML source for the page indicating there was a problem opening
@@ -40,6 +40,22 @@ void print_img_file (int fd, char* url_file )
   int input_fd;
   struct stat file_info;
   int rval;
+
+  char* mine_point;
+  char mine_type[48]; 
+  mine_point = strrchr (url_file, '.');
+
+  if (strcmp(mine_point,".jpg")==0 ) { strcpy (mine_type,"image/jpeg");  }  
+  else if (strcmp(mine_point,".js")==0) { strcpy (mine_type,"application/x-javascript");  }  
+  else if (strcmp(mine_point,".pdf")==0) { strcpy (mine_type,"application/pdf");  }  
+  else if (strcmp(mine_point,".doc")==0 || strcmp(mine_point,".docx")) 
+             { strcpy (mine_type,"application/msword");  }  
+  else if (strcmp(mine_point,".css")==0) { strcpy (mine_type,"text/css");  }  
+  else if (strcmp(mine_point,".xls")==0) { strcpy (mine_type,"application/vnd.ms-excel");  }  
+
+  char http_start[128];
+
+  snprintf ( http_start,sizeof(http_start),http_start_mine_template, mine_type );   
 
   /* Open /etc/issue.  */
   input_fd = open (url_file+1, O_RDONLY);

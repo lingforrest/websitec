@@ -144,7 +144,7 @@ void admin_add_user (int fd, char* buffer)
 "<label for=\"email\" class=\"label\">邮箱地址:</label><input type=\"text\" name=\"user_email\" value=\"\" maxlength=\"32\" size=\"32\" /><br />\n"
 "<input type=\"submit\" name=\"submit\" id=\"submit\" value=\"添加\" /><br />\n"
 "</form>\n"
-"<p><img src=\"img/fengjing.jpg\" />images</p>\n"
+"<p><img src=\"/img/fengjing.jpg\" />images</p>\n"
 "\n";
 
   size_t page_size;

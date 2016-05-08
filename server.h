@@ -4,6 +4,8 @@
 
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <ftw.h>
+#include <sys/stat.h>
 
 /*** Symbols defined in common.c.  ************************************/
 
@@ -77,6 +79,19 @@ extern void admin_add_user (int fd, char* buffer);
 extern void urldecode2(char *dst, const char *src);
 /* print_file.c*/
 extern void print_image_file (int fd, char* url_file);
+/* Data Struc defined for Menu_pages   */
+typedef struct _menu_page {
+          unsigned char id;
+          char* name;
+          char* content;
+} Menu_page;
 
+#define MAX_MENU_PAGES 50
+extern Menu_page menu_page[MAX_MENU_PAGES];
+extern int menu_page_number;
+extern char* menu_dropdown_string;  
+
+extern int read_page_fun (const char *fpath, const struct stat *sb,int tflag, struct FTW *ftwbuf);
+extern void read_menu_pages ();
 
 #endif  /* SERVER_H */

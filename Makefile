@@ -1,7 +1,7 @@
 ### Configuration.  ####################################################
 
 # C source files for the server.
-SOURCES		= server.c module.c common.c main.c  route.c common_pages.c handle_admin.c  print_files.c
+SOURCES		= server.c module.c common.c main.c  route.c common_pages.c handle_admin.c  print_files.c handle_pub.c  menu_pages.c
 # Object files corresponding to source files.
 OBJECTS		= $(SOURCES:.c=.o)
 # Server module shared library files. 

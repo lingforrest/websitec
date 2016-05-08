@@ -46,6 +46,7 @@ void print_img_file (int fd, char* url_file )
   mine_point = strrchr (url_file, '.');
 
   if (strcmp(mine_point,".jpg")==0 ) { strcpy (mine_type,"image/jpeg");  }  
+  else if (strcmp(mine_point,".png")==0) { strcpy (mine_type,"application/x-png");  }  
   else if (strcmp(mine_point,".js")==0) { strcpy (mine_type,"application/x-javascript");  }  
   else if (strcmp(mine_point,".pdf")==0) { strcpy (mine_type,"application/pdf");  }  
   else if (strcmp(mine_point,".doc")==0 || strcmp(mine_point,".docx")) 

@@ -14,18 +14,17 @@
 extern void admin_add_user (int fd, char* buffer);
 extern void admin_create_file (int fd, char* url_file);
 extern void print_img_file (int fd, char* url_file);
+extern void print_home (int fd, char* url_file);
+extern void print_menu_page (int fd, char* url_file);
 
 struct route {
         char *url;
         void (*fpath)(int, char*);
 };
 static struct route routes[] = {
-        { "/css/", print_img_file },
-        { "/script/", print_img_file },
-        { "/docs/", print_img_file },
         { "/admin_add_user/", admin_add_user },
         { "/admin_create_file/", admin_create_file },
-        { "/img/fengjing.jpg/", print_img_file },
+        { "/home.html", print_home },
 };
 static int route_compare(const void *l, const void *r)
 {
@@ -48,7 +47,8 @@ static char* ok_response_1 =
   "<html><head><title>OpenHPC in China</title></head>\n"
   "<body style=\"background:aqua; text-align:center; \"><h1>OpenHPC in China</h1><h3>Under Development </h3>\n"
   "<h4>Contact Information: </h4>"
-  "<p>E-mail:<a href=\"mailto:lingweicai@sohu.com\" > lingweicai@sohu.com</a></p>"
+  "<p>E-mail:<a href=\"mailto:services@openhpc.cn\" > services@openhpc.cn</a></p>"
+  "<p>E-mail:<a href=\"mailto:forrest_wc_ling@dell.com\" > forrest_wc_ling@dell.com</a></p>"
   "<p>Tel: 18600622522 </p>"
   "</body></html>";
 
@@ -68,7 +68,8 @@ void my_handle_connection (int connection_fd)
   /* Read some data from the client.  */
   bytes_read = read (connection_fd, buffer, sizeof (buffer) - 1);
 
-  if (bytes_read > 0) {
+  if (bytes_read > 0) 
+  {
     char method[sizeof (buffer)];
     char url[sizeof (buffer)];
     char protocol[sizeof (buffer)];
@@ -87,7 +88,7 @@ void my_handle_connection (int connection_fd)
       snprintf (response, sizeof (response),"%s", ok_response_1 );
       write (connection_fd, response, strlen (response));
     } else
-       {
+    {
       /* Start route  */
 
         ssize_t count;
@@ -96,11 +97,18 @@ void my_handle_connection (int connection_fd)
 //        static char buf[4096];
 
 //        path = url;
+        
         needle.url = url;
         route = bsearch(&needle, routes, sizeof(routes) / sizeof(struct route),
                         sizeof(struct route), route_compare);
-        if (route) {
-           route->fpath( connection_fd, url );
+        unsigned char url_page_id ;
+        url_page_id = atoi (url+1); 
+        if ( url_page_id >0 && url_page_id <100 ) 
+        {
+           print_menu_page ( connection_fd, url+1 ); 
+        } else if ( route ) 
+        {
+          route->fpath( connection_fd, url );
         } else {
            snprintf (response, sizeof (response), "%s", ok_response_1);
            write (connection_fd, response, strlen (response));

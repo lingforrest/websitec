@@ -152,6 +152,8 @@ int main (int argc, char* const argv[])
   if (verbose)
     printf ("modules will be loaded from %s\n", module_dir);
 
+  /* read menu_page  */ 
+  read_menu_pages ();
   /* Run the server.  */
   server_run (local_address, port);
 

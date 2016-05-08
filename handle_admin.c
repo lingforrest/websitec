@@ -4,6 +4,10 @@
 */
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 //#include "server.h"
 
 static char*  admin_page_template=  
@@ -169,14 +173,43 @@ void admin_create_file (int fd, char* buffer)
 "</form>\n";
 
   int create_file_fd;
-  char file_result[48];
+  char file_result[128];
   size_t page_size;
-  create_file_fd = creat ("user.data", 0664);
+
+  
+  struct blog_users {
+    int  id; //start from 0; 
+    unsigned char type; // 0:admin;10:web-supervisor;20:Techblogger;30:Companies;40:requesters;50:short messa   
+    unsigned char status; // 1: active; 0: inactive;
+    unsigned char points; 
+    char legal_id_x; // x, 0-9;
+    char name[16];
+    char pwd[16];
+    long mobile;
+    char mail[24];
+    char company[48];
+    char address[48];
+    long legal_id;    
+    long bank_id;
+    char bank_name[24];
+    char creat_date[8];
+    char last_log[8];
+//    char photo_link[]; /img/id/head.jpeg
+  };
+  struct blog_users admin[1] = {0,0,1,254,"x","admin","1",18600622522,"lingweicai@sohu.com","Dell","管理员界面",31011019700924623,12345678,"China Bank","20160402","20160402"};
+
+  create_file_fd = open ("admin/user.data", O_WRONLY | O_CREAT , 0664);
   if ( create_file_fd == -1 ) {
     strncpy(file_result, "error create file !", sizeof(file_result)); 
   }else {
     strncpy(file_result, "Congrates create file!", sizeof(file_result)); 
   } 
+    
+  ssize_t nr;  
+  nr = write (create_file_fd, admin, sizeof(admin) ); 
+  if ( nr == -1 ) { strncat(file_result, "write error!", strlen("write error!")) ;} 
+    else if  ( nr != sizeof(admin) ) { strncat(file_result, "count error!", strlen("count error!")) ;} 
+  close (create_file_fd); 
 
   page_size = strlen(admin_page_template) + strlen(file_result)+strlen(page_content) ; 
   snprintf(page_res, sizeof(page_res),admin_page_template, file_result , page_content, page_size ); 
